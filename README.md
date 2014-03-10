@@ -20,6 +20,8 @@ This example features one sensor reading, but can easily be used to read as many
   
 Once you've set up your Imp Device to send some sensor data to the Imp Agent, you'll POST to Plot.ly using the following code:  
 ```c
+// agent.nut
+
 // When Device sends new readings, Run this!
 device.on("new_readings" function(msg) {
 
