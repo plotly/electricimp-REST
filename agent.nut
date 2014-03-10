@@ -1,30 +1,23 @@
+// When Device sends new readings, Run this!
 device.on("new_readings" function(msg) {
+    //Plotly Data Object
     local data = [{
-        x = msg.time_stamp,
-        y = msg.light_sensor_reading,
-        type = "scatter",
-        mode = "markers",
-        marker = {
-            size = (msg.light_sensor_reading)*2,
-        }
-    },
-    {
-        x = msg.time_stamp,
-        y = msg.temp_sensor_reading,
-        type = "bar"
+        x = msg.time_stamp, // Time Stamp from Device
+        y = msg.sensor_reading // Sensor Reading from Device
     }];
 
+    // Plotly Layout Object
     local layout = {
         fileopt = "extend",
-        filename = "REST API Electric Imp Daylight Sensor Temp 88",
+        filename = "Your Clever Filename",
     };
 
-
+    // Setting up Data to be POSTed
     local payload = {
-    un = "electricimp",
-    key = "6hpu3v8jaf",
+    un = "your_username",
+    key = "your_apikey",
     origin = "plot",
-    platform = "rest",
+    platform = "electricimp",
     args = http.jsonencode(data),
     kwargs = http.jsonencode(layout),
     version = "0.0.1"
@@ -36,8 +29,9 @@ device.on("new_readings" function(msg) {
     HttpPostWrapper(url, headers, body, true);
 });
 
-function HttpPostWrapper (url, headers, string, log) {
 
+// Http Request Handler
+function HttpPostWrapper (url, headers, string, log) {
   local request = http.post(url, headers, string);
   local response = request.sendsync();
   if (log)
