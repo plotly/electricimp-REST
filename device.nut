@@ -1,53 +1,33 @@
-local light_sensor = hardware.pin8;
-local temp_sensor = hardware.pin2;
+// initialize pins
+local sensor = hardware.pin1;
+sensor.configure(ANALOG_IN);
 
-light_sensor.configure(ANALOG_IN);
-temp_sensor.configure(ANALOG_IN);
-
-
-function getLight() {
+// function returns voltage from pin
+function getSensor() {
     server.log("getting light");
     local supplyVoltage = hardware.voltage();
     local voltage = supplyVoltage * light_sensor.read() / 65535.0;
-    return (voltage)*20;
+    return (voltage);
 }
 
-function getTemp() {
-    //server.log("getting temp");
-    local reading = temp_sensor.read();
-    local ratio = 65535.0 / reading;
-    local voltage = 3300 / ratio;
-    // get temperature in degrees Celsius
-    local temperatureC = (voltage - 500) / 10.0;
-    // convert to degrees Farenheit
-    local temperatureF = (temperatureC * 9.0 / 5.0) + 32.0;
-    server.log("temp: " + temperatureC);
-    // set our output to desired temperature unit
-    local temp = temperatureC;
-    return temp;
-}
-
-function printTemp() {
-    server.log(getTemp());
-    imp.wakeup(1, printTemp);
-}
-
-function getSensors() {
+// Send Sensor Data to be plotted
+function sendDataToAgent() {
     local supplyVoltage = hardware.voltage();
-
-    local light_voltage = getLight();
-
-    local temp_voltage = getTemp();
+    local sensor_voltage = getSensor();
 
     local sensordata = {
-        light_sensor_reading = light_voltage,
-        temp_sensor_reading = temp_voltage,
+        sensor_reading = sensor_voltage,
         time_stamp = getTime()
     }
     agent.send("new_readings", sensordata);
-    imp.wakeup(1800, getSensors);
+    // How often to make http request
+    imp.wakeup(1800, sendDataToAgent);
 }
 
+
+// Get Time String, -14400 is for -4 GMT (Montreal)
+// use 3600 and multiply by the hours +/- GMT.
+// e.g for +5 GMT local date = date(time()+18000, "u");
 function getTime() {
     local date = date(time()-14400, "u");
     local sec = stringTime(date["sec"]);
@@ -60,6 +40,7 @@ function getTime() {
 
 }
 
+// Fix Time String
 function stringTime(num) {
     if (num < 10)
         return "0"+num;
@@ -67,5 +48,6 @@ function stringTime(num) {
         return ""+num;
 }
 
-getSensors();
-printTemp();
+// Initialize Loop
+sendDataToAgent();
+
