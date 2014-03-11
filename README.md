@@ -1,7 +1,6 @@
-Electric Imp + Plotly REST API
-================
-
+##Electric Imp + Plotly REST API
 ##### Make HTTP posts with the Electric Imp and Visualize your sensor Data
+[![Plotly-imp](readme_images/imp.jpg)](https://electricimp.com)
 
 You'll need to have an account with Plot.ly to begin. 
 
