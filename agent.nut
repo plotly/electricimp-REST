@@ -1,5 +1,6 @@
 // When Device sends new readings, Run this!
 device.on("new_readings" function(msg) {
+
     //Plotly Data Object
     local data = [{
         x = msg.time_stamp, // Time Stamp from Device

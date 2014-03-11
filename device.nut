@@ -20,7 +20,7 @@ function sendDataToAgent() {
         time_stamp = getTime()
     }
     agent.send("new_readings", sensordata);
-    // How often to make http request
+    // How often to make http request (seconds)
     imp.wakeup(1800, sendDataToAgent);
 }
 
